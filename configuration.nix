@@ -14,30 +14,27 @@
     pkgs.wget
   ];
 
+  # boot settings
   fileSystems."/" = {
     device = "/dev/disk/by-label/nixos";
     fsType = "ext4";
   };
-  fileSystems."/boot/efi" = {
-    device = "/dev/disk/by-label/EFI";
-    fsType = "vfat";
-  };
+
   swapDevices = [
     {
       device = "/dev/disk/by-label/swap";
     }
   ];
 
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "/dev/sda"; # assuming your disk is /dev/sda
+  boot.loader.grub.useOSProber = true;  # Optional, for detecting other OS if on a dual boot system
+
   documentation.nixos.enable = false;
   time.timeZone = "Europe/London";
   i18n.defaultLocale = "en_GB.UTF-8";
   console.keyMap = "us";
   nix.settings.trusted-users = [ "@wheel" ];
-
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = "/boot/efi";
-  boot.initrd.availableKernelModules = [ "ahci" "xhci_pci" "virtio_pci" "virtio_scsi" "sd_mod" "sr_mod" "ext4" ];
 
   users.users = {
     root.hashedPassword = "!"; # Disable root login
